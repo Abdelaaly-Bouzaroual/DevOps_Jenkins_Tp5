@@ -15,22 +15,21 @@ Le cycle de vie du logiciel est automatisé via un **Jenkinsfile** structuré en
 
 Chaque modification du code sur GitHub déclenche automatiquement une nouvelle exécution. L'historique permet de suivre la stabilité du projet au fil du temps.
 
-> 
-![Historique des exécutions réussies](screenShots\jobs)
+![Historique des exécutions réussies](screenShots/jobs.png)
 
 ### 2. Visualisation du Pipeline (Stage View)
 
 Le pipeline traite le code par étapes successives. Si une étape échoue, le processus s'arrête pour garantir la qualité.
 
 
-![Vue détaillée des 5 stages (Cloning, Building, Testing, Publishing, Deploying).](screenShots\pipeline.png)
+![Vue détaillée des 5 stages](screenShots/pipeline.png)
 
 ### 3. Archivage sur le Registre (Docker Hub)
 
 Une fois validée, l'image est versionnée et stockée sur Docker Hub. L'utilisation du tag `$BUILD_NUMBER` permet une traçabilité parfaite de chaque version.
 
 
-![épertoire Docker Hub montrant les images taguées par numéro de build et le tag 'latest' mis à jour.](screenShots\dockerHub.png)
+![Dépôt Docker Hub](screenShots/dockerHub.png)
 ---
 
 ## 🛠️ Détails Techniques
