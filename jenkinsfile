@@ -1,0 +1,56 @@
+pipeline {
+    agent any
+
+    environment {
+        // Nom de ton dépôt sur Docker Hub
+        registry = "abdelaaly/tp5"
+        // ID exact de tes identifiants Docker Hub dans Jenkins
+        registryCredential = 'docker-hub-tocken-tp-5'
+        // ID exact de tes identifiants GitHub dans Jenkins
+        githubCredential = 'GITHUB-TOCKEN-TP5'
+        dockerImage = ''
+    }
+
+    stages {
+        stage('Cloning Git') {
+            steps {
+                // Récupération du code depuis ton repo GitHub [cite: 360, 362]
+                git branch: 'main', 
+                    credentialsId: "${githubCredential}", 
+                    url: 'https://github.com/Abdelaaly-Bouzaroual/DevOps_Jenkins_Tp5.git'
+            }
+        }
+
+        stage('Building image') {
+            steps {
+                script {
+                    // Construction de l'image Docker [cite: 363, 367]
+                    // Le BUILD_NUMBER permet d'avoir une version unique pour chaque build
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                }
+            }
+        }
+
+        stage('Publish Image') {
+            steps {
+                script {
+                    // Connexion au registre Docker Hub et envoi de l'image [cite: 368, 371, 372]
+                    docker.withRegistry('', registryCredential) {
+                        dockerImage.push()
+                        // On pousse aussi le tag 'latest' pour le déploiement local [cite: 99]
+                        dockerImage.push('latest')
+                    }
+                }
+            }
+        }
+
+        stage('Deploy image') {
+            steps {
+                // Déploiement continu : on remplace l'ancien conteneur par le nouveau [cite: 317, 318, 553, 555]
+                bat "docker stop tp5-container || ver > nul"
+                bat "docker rm tp5-container || ver > nul"
+                bat "docker run -d -p 8081:80 --name tp5-container ${registry}:latest"
+            }
+        }
+    }
+}
